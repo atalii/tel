@@ -1,3 +1,5 @@
+(provide 'tel)
+
 ;; tel-make-shortcut: define a function tel-shortcut-<name> that calls
 ;; (action) if (predicate) is *false*. Otherwise, it switches to the
 ;; buffer which was previously used.
