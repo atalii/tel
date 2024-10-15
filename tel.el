@@ -35,3 +35,34 @@
   (let ((name (completing-read prompt names)))
     (find-file
      (concat path-prefix "/" (tel--date-fname name) path-suffix))))
+
+
+(defun tel-no-del--should-del-from ()
+  (let ((text (thing-at-point 'line t)))
+    (cond ((string= text "# del on\n")  t)
+
+	  ((string= text "# del off\n") nil)
+	  ((= (line-number-at-pos) 1) t)
+	  (t (progn
+	       (previous-line)
+	       (tel-no-del--should-del-from))))))
+
+;; TODO: search upwards for # del off, # del on. if
+;; nothing or del on, return t.
+(defun tel-no-del--should-del ()
+  (save-excursion
+    (progn
+      (previous-line)
+      (tel-no-del--should-del-from))))
+
+(defun tel-no-del--bs ()
+  (interactive)
+  (when (tel-no-del--should-del)
+      (delete-backward-char 1)))
+
+;; tel-no-del-mode: Deleting text with backspace and C-backspace
+;; is disabled between "# del off" and "# del on".
+(define-minor-mode tel-no-del-mode
+  "Toogle tel-no-del-mode. This selectively disables text deletion."
+  nil " Tel/Del"
+  '(([backspace] . tel-no-del--bs)))
