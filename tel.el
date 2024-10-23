@@ -12,16 +12,15 @@
 
     `(progn
        (setq ,buf-store nil)
-       (defalias (intern ,invoke-name-str)
-	 (lambda ()
-	   (interactive)
-	   (if (,predicate)
-	       (progn
-		 (switch-to-buffer ,buf-store)
-		 (setq ,buf-store nil))
+       (defun ,(intern invoke-name-str) ()
+	 (interactive)
+	 (if (,predicate)
 	     (progn
-	       (setq ,buf-store (current-buffer))
-	       (,action))))))))
+	       (switch-to-buffer ,buf-store)
+	       (setq ,buf-store nil))
+	   (progn
+	     (setq ,buf-store (current-buffer))
+	     (,action)))))))
 
 ;; Tag a given string with the current date.
 (defun tel--date-fname (name)
