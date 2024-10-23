@@ -1,5 +1,8 @@
 (provide 'tel)
 
+(defvar tel-shortcut-list '()
+  "An alist of shortcuts used for looking up by name.")
+
 ;; tel-make-shortcut: define a function tel-shortcut-<name> that calls
 ;; (action) if (predicate) is *false*. Otherwise, it switches to the
 ;; buffer which was previously used.
@@ -8,11 +11,12 @@
 	   (concat "tel-shortcut--" name "-buffer"))
 	  (invoke-name-str (concat "tel-shortcut-" name))
 
-	  (buf-store (intern buf-store-name)))
+	  (buf-store (intern buf-store-name))
+	  (func-name (intern invoke-name-str)))
 
     `(progn
        (setq ,buf-store nil)
-       (defun ,(intern invoke-name-str) ()
+       (defun ,func-name ()
 	 (interactive)
 	 (if (,predicate)
 	     (progn
@@ -20,7 +24,16 @@
 	       (setq ,buf-store nil))
 	   (progn
 	     (setq ,buf-store (current-buffer))
-	     (,action)))))))
+	     (,action))))
+
+       (add-to-list 'tel-shortcut-list '(,name . ,func-name)))))
+
+
+(defun tel-shortcut-search ()
+  (interactive)
+  (let* ((choice (completing-read "Shortcut: " tel-shortcut-list))
+	 (callback (cdr (assoc choice tel-shortcut-list))))
+    (funcall callback)))
 
 ;; Tag a given string with the current date.
 (defun tel--date-fname (name)
