@@ -63,6 +63,6 @@
 ;; tel-no-del-mode: Deleting text with backspace and C-backspace
 ;; is disabled between "# del off" and "# del on".
 (define-minor-mode tel-no-del-mode
-  "Toogle tel-no-del-mode. This selectively disables text deletion."
+  "tel-no-del-mode selectively disables text deletion."
   nil " Tel/Del"
   '(([backspace] . tel-no-del--bs)))
